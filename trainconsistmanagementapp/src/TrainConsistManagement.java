@@ -1,35 +1,42 @@
-import java.util.Scanner;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.util.*;
+import java.util.stream.*;
+
+class GoodsBogie {
+    String type;
+    String cargo;
+
+    public GoodsBogie(String type, String cargo) {
+        this.type = type;
+        this.cargo = cargo;
+    }
+
+    @Override
+    public String toString() {
+        return type + " bogie carrying " + cargo;
+    }
+}
 
 public class TrainConsistManagement {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        List<GoodsBogie> goodsBogies = Arrays.asList(
+                new GoodsBogie("Rectangular", "Coal"),
+                new GoodsBogie("Cylindrical", "Petroleum"),
+                new GoodsBogie("Box", "Grain"),
+                new GoodsBogie("Cylindrical", "Petroleum")
+        );
 
-        System.out.println("=== Train Consist Management App ===");
-        System.out.print("Enter Train ID: ");
-        String trainID = scanner.nextLine();
+        goodsBogies.forEach(System.out::println);
 
-        System.out.print("Enter Cargo Code: ");
-        String cargoCode = scanner.nextLine();
+        boolean isSafe = goodsBogies.stream()
+                .allMatch(bogie -> {
+                    if (bogie.type.equalsIgnoreCase("Cylindrical")) {
+                        return bogie.cargo.equalsIgnoreCase("Petroleum");
+                    }
+                    return true;
+                });
 
-        String trainPattern = "TRN-\\d{4}";
-        String cargoPattern = "PET-[A-Z]{2}";
-
-        Pattern trainRegex = Pattern.compile(trainPattern);
-        Pattern cargoRegex = Pattern.compile(cargoPattern);
-
-        Matcher trainMatcher = trainRegex.matcher(trainID);
-        Matcher cargoMatcher = cargoRegex.matcher(cargoCode);
-
-        boolean isTrainValid = trainMatcher.matches();
-        boolean isCargoValid = cargoMatcher.matches();
-
-        System.out.println("Train ID " + trainID + " is " + (isTrainValid ? "valid" : "invalid"));
-        System.out.println("Cargo Code " + cargoCode + " is " + (isCargoValid ? "valid" : "invalid"));
-
-        scanner.close();
+        System.out.println("\nTrain Safety Compliance: " + (isSafe ? "SAFE" : "UNSAFE"));
     }
 }
